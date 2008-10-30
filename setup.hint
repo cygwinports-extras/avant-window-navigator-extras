@@ -1,0 +1,8 @@
+category: X11
+requires: cygwin atk avant-window-navigator GConf2 gdk-pixbuf2 glib2 gnome-menus gnome-vfs2 gtk2-x11 libcairo2 libdbus-glib_1_2 libdbus1_3 libglade2 libgnome-desktop2 libgnomeui2 libgtop2 libintl8 libnotify libsexy libwnck1_22 libX11_6 libXcomposite1 libXfixes3 libXrender1 python python-cairo python-dbus python-feedparser python-gconf2 python-gdata python-gnome2 python-gnomedesktop2 python-gnomevfs2 python-gobject2 python-gstreamer010 python-gtk2 python-rsvg2 python-wnck vte
+sdesc: "Applets for Avant Window Navigator"
+ldesc: "Awn Extras is a project focusing on providing a number of 
+important applets (not unlike the panel applets for Gnome and Xfce) in 
+a single package, along with a number of plugins that allow 
+applications to better interface with Awn's task manager. These applets 
+range from a Trash applet to fancy workspace switcher."

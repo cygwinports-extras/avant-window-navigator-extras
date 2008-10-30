@@ -1,0 +1,23 @@
+ORIG_PN="awn-extras-applets"
+inherit gnome2 python
+
+DESCRIPTION="Compositing dock bar"
+HOMEPAGE="https://launchpad.net/awn-extras/"
+SRC_URI="http://launchpad.net/awn-extras/${PV[1]}.${PV[2]}/${PV}/+download/${ORIG_PN}-${PV}.tar.gz"
+PATCH_URI="0.2.6-disable-non-working-applets.patch
+           0.2.6-no-undefined.patch
+           0.2.6-vpath.patch"
+
+DIFF_EXCLUDES="*.desktop.in"
+
+ACLOCAL_FLAGS="-I m4"
+CYGCONF_ARGS="--disable-pymod-checks"
+MAKEOPTS+=" LDFLAGS=-no-undefined"
+
+src_install() {
+	cd ${B}
+	cyginstall
+
+	sed -i -e '/^Exec=/ s/\.so$/.dll/' ${D}/usr/lib/awn/applets/*.desktop
+	python_optimize /usr/lib/awn/applets
+}

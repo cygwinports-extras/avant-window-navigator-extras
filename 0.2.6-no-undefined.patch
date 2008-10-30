@@ -1,0 +1,19 @@
+--- origsrc/awn-extras-applets-0.2.6/src/libawn-extras/Makefile.am	2008-02-14 10:49:53.000000000 -0600
++++ src/awn-extras-applets-0.2.6/src/libawn-extras/Makefile.am	2008-10-29 20:50:23.726520100 -0500
+@@ -26,4 +26,4 @@
+ 	$(source_c)
+ 	
+ libawn_extras_la_LIBADD = $(AWN_LIBS) $(LIBNOTIFY_LIBS)
+-libawn_extras_la_LDFLAGS = -version-info 0:1:0
++libawn_extras_la_LDFLAGS = -version-info 0:1:0 -no-undefined
+--- origsrc/awn-extras-applets-0.2.6/src/libawn-extras/bindings/python/Makefile.am	2008-02-22 09:30:34.000000000 -0600
++++ src/awn-extras-applets-0.2.6/src/libawn-extras/bindings/python/Makefile.am	2008-10-29 20:54:39.193635100 -0500
+@@ -19,7 +19,7 @@
+ pyawn_extrasexecdir = $(PYTHON_SITE_PKG)/awn/extras
+ pyawn_extrasexec_LTLIBRARIES = _extras.la
+ 
+-common_ldflags = -module -avoid-version
++common_ldflags = -module -avoid-version -no-undefined
+ 
+ AWN_EXTRAS_DEFS = awn_extras.defs
+ AWN_EXTRAS_OVERRIDE = awn_extras.override

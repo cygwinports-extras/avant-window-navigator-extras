@@ -1,0 +1,22 @@
+--- origsrc/awn-extras-applets-0.2.6/Makefile.python-applet	2008-02-19 14:40:35.000000000 -0600
++++ src/awn-extras-applets-0.2.6/Makefile.python-applet	2008-10-29 23:33:58.891648800 -0500
+@@ -6,7 +6,7 @@
+ 
+ install-exec-local:
+ 	test -d "$(DESTDIR)$(appletdir)" || mkdir -p "$(DESTDIR)$(appletdir)"
+-	$(INSTALL) -m 755 "$(APPLET_MAIN_FILE)" "$(DESTDIR)$(appletdir)/$(APPLET_MAIN_FILE)"
++	$(INSTALL) -m 755 "$(srcdir)/$(APPLET_MAIN_FILE)" "$(DESTDIR)$(appletdir)/$(APPLET_MAIN_FILE)"
+ 
+ uninstall-local:
+ 	rm -f "$(DESTDIR)$(appletdir)/$(APPLET_MAIN_FILE)"
+--- origsrc/awn-extras-applets-0.2.6/src/libawn-extras/bindings/python/Makefile.am	2008-02-22 09:30:34.000000000 -0600
++++ src/awn-extras-applets-0.2.6/src/libawn-extras/bindings/python/Makefile.am	2008-10-29 20:54:39.193635100 -0500
+@@ -11,7 +11,7 @@
+ 	$(PYGTK_CFLAGS) \
+ 	$(PYCAIRO_CFLAGS) \
+ 	$(AWN_CFLAGS) \
+-	-I$(top_builddir)/src \
++	-I$(top_srcdir)/src \
+ 	-DHAVE_PYCAIRO \
+ 	$(NULL)
+ 
