@@ -1,0 +1,30 @@
+pandora: requires python-gtkmozembed
+battery-applet: requires HAL
+volume-control: requires ALSA
+
+--- origsrc/awn-extras-applets-0.3.2.1/src/Makefile.am	2009-03-09 15:47:46.000000000 -0500
++++ src/awn-extras-applets-0.3.2.1/src/Makefile.am	2009-03-11 01:09:59.774825800 -0500
+@@ -34,7 +34,6 @@ GCONF_APPLETS +=	\
+ 	digg		\
+ 	main-menu	\
+ 	MiMenu		\
+-	pandora		\
+ 	rtm		\
+ 	trash		\
+ 	$(NULL)
+@@ -56,7 +55,6 @@ SUBDIRS =			\
+ 	arss			\
+ 	awn-meebo		\
+ 	awnterm			\
+-	battery-applet		\
+ 	cairo-clock		\
+ 	comic			\
+ 	comics			\
+@@ -82,7 +80,6 @@ SUBDIRS =			\
+ 	thinkhdaps			\
+ 	to-do				\
+ 	tomboy-applet		\
+-	volume-control		\
+ 	weather			\
+ 	$(WOBBLYZINI)		\
+ 	$(GCONF_APPLETS)	\

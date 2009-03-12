@@ -1,0 +1,22 @@
+ORIG_PN="awn-extras-applets"
+inherit pygtk gnome2
+
+DESCRIPTION="Compositing dock bar"
+HOMEPAGE="https://launchpad.net/awn-extras/"
+SRC_URI="http://launchpad.net/awn-extras/0.2/${PV}/+download/${ORIG_PN}-${PV}.tar.gz"
+PATCH_URI="0.3.2.1-disable-non-working-applets.patch
+           0.3.2.1-no-undefined.patch"
+
+DIFF_EXCLUDES="*.desktop.in"
+
+ACLOCAL_FLAGS="-I m4"
+CYGCONF_ARGS="--disable-pymod-checks --with-webkit"
+MAKEOPTS+=" LDFLAGS=-no-undefined"
+
+src_install() {
+	cd ${B}
+	cyginstall
+
+	sed -i -e '/^Exec=/ s/\.so$/.dll/' ${D}/usr/share/avant-window-navigator/applets/*.desktop
+	python_optimize /usr/share/avant-window-navigator/applets
+}
