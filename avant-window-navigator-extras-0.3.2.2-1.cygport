@@ -4,8 +4,12 @@ inherit pygtk gnome2
 DESCRIPTION="Compositing dock bar"
 HOMEPAGE="https://launchpad.net/awn-extras/"
 SRC_URI="http://launchpad.net/awn-extras/0.2/${PV}/+download/${ORIG_PN}-${PV}.tar.gz"
-PATCH_URI="0.3.2.1-disable-non-working-applets.patch
-           0.3.2.1-no-undefined.patch"
+
+PATCH_URI="
+	0.3.2.1-disable-non-working-applets.patch
+	0.3.2.1-no-undefined.patch
+	0.3.2.2-gtk-2.18.patch
+"
 
 DIFF_EXCLUDES="*.desktop.in"
 

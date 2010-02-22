@@ -1,0 +1,115 @@
+--- origsrc/awn-extras-applets-0.3.2.2/configure.ac	2009-04-18 16:13:50.000000000 -0500
++++ src/awn-extras-applets-0.3.2.2/configure.ac	2010-02-16 15:18:36.462138600 -0600
+@@ -82,7 +82,6 @@ PKG_CHECK_MODULES(LIBX11, [x11])
+ PKG_CHECK_MODULES(COMPOSITE, [xcomposite])
+ PKG_CHECK_MODULES(XRENDER, [xrender])
+ # cairo-menu, notification-daemon
+-PKG_CHECK_MODULES(LIBSEXY, [libsexy])
+ PKG_CHECK_MODULES(LIBNOTIFY, [libnotify])
+ # standalone-launcher, taskmand, taskmand-applet
+ PKG_CHECK_MODULES(DBUS_GLIB, [dbus-glib-1])
+@@ -156,13 +155,13 @@ fi
+ if test "$with_gconf" != "no" -a "$with_gnome" != "no"; then
+ PKG_CHECK_MODULES(AWN_SYSTEM_MONITOR, [$gconf libgtop-2.0])
+ PKG_CHECK_MODULES(FILEBROWSER, [$gconf gnome-desktop-2.0 gnome-vfs-2.0 libgnomeui-2.0])
+-PKG_CHECK_MODULES(CAIRO_MENU_GNOME, [$gconf gnome-vfs-2.0 libgnome-menu libnotify libsexy])
++PKG_CHECK_MODULES(CAIRO_MENU_GNOME, [$gconf gnome-vfs-2.0 libgnome-menu libnotify])
+ PKG_CHECK_MODULES(PLUGGER, [$gconf gnome-vfs-2.0])
+ PKG_CHECK_MODULES(TRASH, [gnome-vfs-2.0 libglade-2.0 x11])
+ PKG_CHECK_MODULES(TRASHER, [$gconf gnome-vfs-2.0])
+ fi
+ if test "$with_gconf" != "no"; then
+-PKG_CHECK_MODULES(NOTIFICATION_DAEMON, [$gconf $gstreampkg libnotify libsexy libwnck-1.0 x11])
++PKG_CHECK_MODULES(NOTIFICATION_DAEMON, [$gconf $gstreampkg libnotify libwnck-1.0 x11])
+ fi
+ PKG_CHECK_MODULES(SHINY_SWITCHER, [libwnck-1.0 x11 xcomposite xrender])
+ PKG_CHECK_MODULES(STANDALONE_LAUNCHER, [dbus-glib-1 libwnck-1.0])
+--- origsrc/awn-extras-applets-0.3.2.2/src/cairo-menu/render.c	2009-04-18 16:13:16.000000000 -0500
++++ src/awn-extras-applets-0.3.2.2/src/cairo-menu/render.c	2010-02-16 15:57:26.161389700 -0600
+@@ -19,8 +19,8 @@
+ #undef NDEBUG
+ #include <assert.h>
+ #include <gdk/gdk.h>
++#include <gtk/gtk.h>
+ #include <libawn/awn-cairo-utils.h>
+-#include <libsexy/sexy-icon-entry.h>
+ #include <string.h>
+ 
+ #include "menu.h"
+@@ -303,6 +303,23 @@ void render_separator(Menu_list_item *en
+ 
+ }
+ 
++static void
++icon_pressed_cb (GtkEntry *entry, gint position, GdkEventButton *event, gpointer data)
++{
++  if (position == GTK_ENTRY_ICON_SECONDARY)
++    gtk_entry_set_text (entry, "");
++}
++
++static void
++text_changed_cb (GtkEntry *entry, GParamSpec *pspec, GtkWidget *button)
++{
++  gboolean has_text;
++
++  has_text = gtk_entry_get_text_length (entry) > 0;
++  gtk_entry_set_icon_sensitive (entry, GTK_ENTRY_ICON_SECONDARY, has_text);
++}
++
++
+ void render_textentry(Menu_list_item *entry, int max_width)
+ {
+   //printf("render_textentry\n");
+@@ -325,10 +342,11 @@ void render_textentry(Menu_list_item *en
+   gtk_event_box_set_above_child(GTK_EVENT_BOX(entry->widget), TRUE);
+   entry->normal = build_menu_widget(&G_cairo_menu_conf.normal, entry->name, pbuf, NULL, max_width);
+   entry->hover = build_menu_widget(&G_cairo_menu_conf.hover, entry->name, pbuf, NULL, max_width);
+-  entry->text_entry = sexy_icon_entry_new();
+-  sexy_icon_entry_set_icon((SexyIconEntry *)entry->search_entry, SEXY_ICON_ENTRY_PRIMARY,
+-                           GTK_IMAGE(gtk_image_new_from_pixbuf(pbuf)));
+-  sexy_icon_entry_add_clear_button((SexyIconEntry *)entry->search_entry);
++  entry->text_entry = gtk_entry_new();
++  gtk_entry_set_icon_from_pixbuf(GTK_ENTRY(entry->search_entry), GTK_ENTRY_ICON_PRIMARY, pbuf);
++  gtk_entry_set_icon_from_stock(GTK_ENTRY(entry->search_entry), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_CLEAR);
++  g_signal_connect (entry->search_entry, "icon-press", G_CALLBACK(icon_pressed_cb), NULL);
++  g_signal_connect (entry->search_entry, "notify::text", G_CALLBACK(text_changed_cb), NULL);
+   g_object_ref(entry->normal);
+   gtk_container_add(GTK_CONTAINER(entry->widget), entry->normal);
+ 
+--- origsrc/awn-extras-applets-0.3.2.2/src/notification-daemon/src/daemon/engines.c	2009-04-18 16:13:16.000000000 -0500
++++ src/awn-extras-applets-0.3.2.2/src/notification-daemon/src/daemon/engines.c	2010-02-16 18:41:22.532998000 -0600
+@@ -53,7 +53,6 @@
+ #include <string.h>
+ #include <gtk/gtk.h>
+ #include <glib.h>
+-#include <libsexy/sexy-url-label.h>
+ 
+ #include <libawn/awn-applet.h>
+ #include <libawn/awn-applet-simple.h>
+@@ -753,7 +752,7 @@ create_notification(UrlClickedCb url_cli
+ 
+   gtk_box_pack_start(GTK_BOX(windata->content_hbox), vbox, TRUE, TRUE, 0);
+ 
+-  windata->body_label = sexy_url_label_new();
++  windata->body_label = gtk_label_new(NULL);
+ 
+   gtk_box_pack_start(GTK_BOX(vbox), windata->body_label, TRUE, TRUE, 0);
+ 
+@@ -887,7 +886,7 @@ set_notification_text(GtkWindow *nw, con
+                           G_daemon_config.awn_text_str, body, endchar, G_daemon_config.bold_text_body ? "</b>" : "");
+   }
+ 
+-  sexy_url_label_set_markup(SEXY_URL_LABEL(windata->body_label), str);
++  gtk_label_set_markup(GTK_LABEL(windata->body_label), str);
+ 
+   if (!strlen(gtk_label_get_label(GTK_LABEL(windata->body_label))))
+   {
+@@ -896,7 +895,7 @@ set_notification_text(GtkWindow *nw, con
+     str = g_strdup_printf("%s<small><span foreground=\"#%s\"> %s%c\n</span></small>%s", G_daemon_config.bold_text_body ? "<b>" : "",
+                           G_daemon_config.awn_text_str, tmp, endchar, G_daemon_config.bold_text_body ? "</b>" : "");
+ 
+-    sexy_url_label_set_markup(SEXY_URL_LABEL(windata->body_label), str);
++    gtk_label_set_markup(GTK_LABEL(windata->body_label), str);
+     g_free(tmp);
+   }
+ 
